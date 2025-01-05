@@ -1,0 +1,127 @@
+<html>
+  <style>
+    body {
+      font-family: arial;
+      font-size: 14px;
+      line-height: 2.5;
+    }
+    #myTextBox1 {
+      margin-left: 40px;
+    }
+    inline-elements {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .gap-40 {
+      margin-right: 40px;
+    }
+  </style>
+  <body>
+    <h3>Car Mileage Estimator</h3>
+
+    <div class="inline-elements">
+      <form action="/result" method="POST">
+        <label for="cylinders" class="gap-40">No. of Cylinders</label>
+        <select id="cylinders" name="cylinders" , placeholder="4">
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="8">8</option>
+        </select>
+        <br />
+        <label for="displacement" class="gap-40">Displacement (cc)</label>
+        <input
+          type="text"
+          id="displacement"
+          name="displacement"
+          placeholder="120"
+        />
+        <br />
+        <label for="horsepower" class="gap-40">Horsepower (bhp)</label>
+        <input
+          type="text"
+          id="horsepower"
+          name="horsepower"
+          placeholder="100"
+        />
+        <br />
+        <label for="weight" class="gap-40">Weight (kg)</label>
+        <input type="text" id="weight" name="weight" placeholder="2800" />
+        <br />
+        <label for="model year" class="gap-40">Model Year (XX)</label>
+        <input
+          type="text"
+          id="model year"
+          name="model year"
+          placeholder="75"
+        />(between '72 and '82)
+        <br />
+        <label for="origin" class="gap-40">Origin</label>
+        <select id="origin" name="origin">
+          <option value="america">America</option>
+          <option value="asia">Asia</option>
+          <option value="europe">Europe</option>
+        </select>
+        <br />
+        <label for="make" class="gap-40">Make</label>
+        <select id="make" name="make">
+          <option value="amc">AMC</option>
+          <option value="audi">Audi</option>
+          <option value="bmw">BMW</option>
+          <option value="buick">Buick</option>
+          <option value="cadillac">Cadillac</option>
+          <option value="capri">Capri</option>
+          <option value="chevrolet">Chevrolet</option>
+          <option value="chrysler">Chrysler</option>
+          <option value="datsun">Datsun</option>
+          <option value="dodge">Dodge</option>
+          <option value="fiat">Fiat</option>
+          <option value="ford">Ford</option>
+          <option value="hi">Hi</option>
+          <option value="honda">Honda</option>
+          <option value="mazda">Mazda</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="mercury">Mercury</option>
+          <option value="nissan">Nissan</option>
+          <option value="oldsmobile">Oldsmobile</option>
+          <option value="opel">Opel</option>
+          <option value="peugeot">Peugeot</option>
+          <option value="plymouth">Plymouth</option>
+          <option value="pontiac">Pontiac</option>
+          <option value="renault">Renault</option>
+          <option value="saab">Saab</option>
+          <option value="subaru">Subaru</option>
+          <option value="toyota">Toyota</option>
+          <option value="triumph">Triumph</option>
+          <option value="volkswagen">Volkswagen</option>
+          <option value="volvo">Volvo</option>
+        </select>
+        <br />
+        <div style="margin-left: 100px; margin-top: 25px" ;>
+          <input
+            type="submit"
+            value="Submit"
+            style="font-size: 12px; padding: 5px 10px"
+          />
+        </div>
+      </form>
+      <div style="margin-left: 100px; margin-top: 25px">
+        <p>----- OR -----</p>
+      </div>
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="file" class="gap-40">Upload CSV File: </label>
+        <input type="file" id="file" name="file" accept=".csv" />
+        <br />
+        <div style="margin-left: 100px; margin-top: 10px" ;>
+          <input
+            type="submit"
+            value="Upload"
+            style="font-size: 12px; padding: 5px 10px"
+          />
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
