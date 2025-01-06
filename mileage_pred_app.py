@@ -13,8 +13,8 @@ def home():
 
 
 def ValuePredictor(to_predict_list):
-    to_predict = np.array(to_predict_list).reshape(1, 15)
-    loaded_model = pickle.load(open("heart_attack_model.pkl", "rb"))
+    to_predict = np.array(to_predict_list).reshape(1, 35)
+    loaded_model = pickle.load(open("mileage_prediction_model.pkl", "rb"))
     result = loaded_model.predict(to_predict)
     return result[0]
 
@@ -23,13 +23,62 @@ def ValuePredictor(to_predict_list):
 def result():
     to_predict_list = request.form.to_dict()
     to_predict_list = list(to_predict_list.values())
-    to_predict_list = list(map(int, to_predict_list))
+
+    to_predict_list[:-2] = list(map(int, to_predict_list[:-2]))
+
+    origin = to_predict_list[-2]
+    make = to_predict_list[-1]
+
+    origin_mapping = {"america": 0, "asia": 1, "europe": 2}
+
+    make_mapping = {
+        "amc": 0,
+        "audi": 1,
+        "bmw": 2,
+        "buick": 3,
+        "cadillac": 4,
+        "capri": 5,
+        "chevrolet": 6,
+        "chrysler": 7,
+        "datsun": 8,
+        "dodge": 9,
+        "fiat": 10,
+        "ford": 11,
+        "hi": 12,
+        "honda": 13,
+        "mazda": 14,
+        "mercedes": 15,
+        "mercury": 16,
+        "oldsmobile": 17,
+        "peugeot": 18,
+        "plymouth": 19,
+        "pontiac": 20,
+        "renault": 21,
+        "saab": 22,
+        "subaru": 23,
+        "toyota": 24,
+        "triumph": 25,
+        "volkswagen": 26,
+        "volvo": 27,
+    }
+
+    origin_encoded = [0] * (len(origin_mapping) - 1)
+    make_encoded = [0] * (len(make_mapping) - 1)
+
+    if origin in origin_mapping:
+        origin_index = origin_mapping[origin] - 1
+        if origin_index >= 0:
+            origin_encoded[origin_index] = 1
+
+    if make in make_mapping:
+        make_index = make_mapping[make] - 1
+        if make_index >= 0:
+            make_encoded[make_index] = 1
+
+    to_predict_list = to_predict_list[:-2] + origin_encoded + make_encoded
+
     result = ValuePredictor(to_predict_list)
-    if int(result) == 1:
-        prediction = "High chances of Heart Attack"
-    else:
-        prediction = "Heart Attack not likely"
-    return render_template("result.html", prediction=prediction)
+    return render_template("result.html", prediction=result)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -45,32 +94,29 @@ def upload_file():
             file.save(file_path)
             data = pd.read_csv(file_path)
 
-            if "Gender" in data.columns:
-                data["Gender"] = data["Gender"].map({"Female": 0, "Male": 1})
+            data["horsepower"] = pd.to_numeric(data["horsepower"], errors="coerce")
+            dataEncoded = pd.get_dummies(df, drop_first=True)
 
-            for column in data.columns:
-                data[column] = pd.to_numeric(data[column], errors="coerce")
+            for col in dataEncoded.columns:
+                dataEncoded[col] = pd.to_numeric(dataEncoded[col], errors="coerce")
 
-            predictions = bulk_predict(data)
+            bulk_predictions = bulk_predict(dataEncoded)
 
-            if "Gender" in predictions.columns:
-                predictions["Gender"] = predictions["Gender"].map(
-                    {0: "Female", 1: "Male"}
-                )
+            original_data = pd.read_csv(file_path)
+            original_data["predicted_mileage"] = bulk_predictions["predicted_mileage"]
 
             original_file_name = os.path.splitext(file.filename)[0]
             result_filename = f"{original_file_name}_predictions.csv"
             result_file_path = os.path.join("uploads", result_filename)
-            predictions.to_csv(result_file_path, index=False)
+            original_data.to_csv(result_file_path, index=False)
             return send_file(result_file_path, as_attachment=True)
     return redirect(url_for("home"))
 
 
 def bulk_predict(data):
-    loaded_model = pickle.load(open("heart_attack_model.pkl", "rb"))
-    labels = loaded_model.predict(data)
-    outcome_mapping = {0: "Healthy", 1: "Not Healthy"}
-    data["outcome"] = [outcome_mapping[label] for label in labels]
+    loaded_model = pickle.load(open("mileage_prediction_model", "rb"))
+    predictions = loaded_model.predict(data)
+    data["predicted_mileage"] = predictions
     return data
 
 
