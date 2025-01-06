@@ -13,7 +13,7 @@ def home():
 
 
 def ValuePredictor(to_predict_list):
-    to_predict = np.array(to_predict_list).reshape(1, 35)
+    to_predict = np.array(to_predict_list).reshape(1, 37)
     loaded_model = pickle.load(open("mileage_prediction_model.pkl", "rb"))
     result = loaded_model.predict(to_predict)
     return result[0]
@@ -49,17 +49,19 @@ def result():
         "mazda": 14,
         "mercedes": 15,
         "mercury": 16,
-        "oldsmobile": 17,
-        "peugeot": 18,
-        "plymouth": 19,
-        "pontiac": 20,
-        "renault": 21,
-        "saab": 22,
-        "subaru": 23,
-        "toyota": 24,
-        "triumph": 25,
-        "volkswagen": 26,
-        "volvo": 27,
+        "nissan": 17,
+        "oldsmobile": 18,
+        "opel": 19,
+        "peugeot": 20,
+        "plymouth": 21,
+        "pontiac": 22,
+        "renault": 23,
+        "saab": 24,
+        "subaru": 25,
+        "toyota": 26,
+        "triumph": 27,
+        "volkswagen": 28,
+        "volvo": 29,
     }
 
     origin_encoded = [0] * (len(origin_mapping) - 1)
@@ -95,15 +97,16 @@ def upload_file():
             data = pd.read_csv(file_path)
 
             data["horsepower"] = pd.to_numeric(data["horsepower"], errors="coerce")
-            dataEncoded = pd.get_dummies(df, drop_first=True)
+            dataEncoded = pd.get_dummies(data, drop_first=True)
 
             for col in dataEncoded.columns:
                 dataEncoded[col] = pd.to_numeric(dataEncoded[col], errors="coerce")
 
-            bulk_predictions = bulk_predict(dataEncoded)
+            loaded_model = pickle.load(open("mileage_prediction_model.pkl", "rb"))
+            predictions = loaded_model.predict(dataEncoded)
 
             original_data = pd.read_csv(file_path)
-            original_data["predicted_mileage"] = bulk_predictions["predicted_mileage"]
+            original_data["predicted_mileage"] = predictions
 
             original_file_name = os.path.splitext(file.filename)[0]
             result_filename = f"{original_file_name}_predictions.csv"
@@ -113,11 +116,11 @@ def upload_file():
     return redirect(url_for("home"))
 
 
-def bulk_predict(data):
-    loaded_model = pickle.load(open("mileage_prediction_model", "rb"))
-    predictions = loaded_model.predict(data)
-    data["predicted_mileage"] = predictions
-    return data
+# def bulk_predict(data):
+#     loaded_model = pickle.load(open("mileage_prediction_model.pkl", "rb"))
+#     predictions = loaded_model.predict(data)
+#     data["predicted_mileage"] = predictions
+#     return data
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h4>The predicted value is {{ prediction }} mpg.</h4>
+    <h4>The predicted value is {{ prediction | round(1) }} mpg.</h4>
     <p style="font-size: 14px">(within ± 2 mpg)</p>
   </body>
 </html>
