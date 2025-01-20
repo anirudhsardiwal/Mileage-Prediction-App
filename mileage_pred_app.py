@@ -96,15 +96,13 @@ def upload_file():
             file.save(file_path)
             data = pd.read_csv(file_path)
 
-            data["horsepower"] = pd.to_numeric(data["horsepower"], errors="coerce")
-            dataEncoded = pd.get_dummies(data, drop_first=True)
-            dataEncoded = dataEncoded.replace({False: 0, True: 1})
+            with open("preprocessor.pkl", "rb") as f:
+                preprocessor = pickle.load(f)
+            with open("mileage_prediction_model.pkl", "rb") as f:
+                model = pickle.load(f)
 
-            for col in dataEncoded.columns:
-                dataEncoded[col] = pd.to_numeric(dataEncoded[col], errors="coerce")
-
-            loaded_model = pickle.load(open("mileage_prediction_model.pkl", "rb"))
-            predictions = loaded_model.predict(dataEncoded).round(1)
+            dataEncoded = preprocessor.transform(data)
+            predictions = model.predict(dataEncoded).round(1)
 
             original_data = pd.read_csv(file_path)
             original_data["predicted_mileage"] = predictions
